@@ -13,6 +13,7 @@
     "@notionhq/client": "^0.4.0",
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
+    "fs": "*",
     "nodemailer": "^6.7.0"
   },
   "devDependencies": {

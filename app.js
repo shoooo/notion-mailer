@@ -1,24 +1,27 @@
-const express = require('express')
-const { getData } = require('./api/notion')
-const { sendEmail } = require('./api/nodemailer')
+const express = require("express");
+const { getData, getTemplate, updatePage } = require("./api/notion");
+const { sendEmail } = require("./api/nodemailer");
+const fs = require("fs");
 
 const app = express();
-require('dotenv').config();
+require("dotenv").config();
 
 const run = async () => {
   const data = await getData();
+  const mainText = fs.readFileSync(__dirname + "/text.html").toString();
+  console.log(mainText)
 
-  for (let i=0; data.length; i++) {
-    if (data[i]) {
+  for (i = 0; i < data.length; i++) {
+    if (data[i].status === "新規見込み客") {
+      const text = `${data[i].name}<br>${mainText}`;
 
+      sendEmail(data[i].email, "オンラインでの集客を実現！SNS＋ウェブサイト運用サービスに関するご提案", text);
+      // updatePage(data[i].data.id);
     }
   }
-
-  const text = `${data[0].name}様、これはテストです。Vibin Marketingの${data[0].plan}に加入しませんか？`
-  sendEmail(data[0].email, text)
-}
+};
 
 run();
 
-const PORT = process.env.PORT || 3000
-app.listen(PORT, console.log(`Server started on port ${PORT}`))
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, console.log(`Server started on port ${PORT}`));

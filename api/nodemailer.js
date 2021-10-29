@@ -1,10 +1,10 @@
 const transporter = require("../config/auth").transporter;
 
-const sendEmail = async (to, text) => {
+const sendEmail = async (to, subject, text) => {
     const message = {
         from: process.env.EMAIL,
         to: `${to}`,
-        subject: "字幕英訳に関するご提案",
+        subject: `${subject}`,
         html: `${text}`,
     };
 
