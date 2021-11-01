@@ -1,5 +1,5 @@
 const express = require("express");
-const { getData, getTemplate, updatePage } = require("./api/notion");
+const { getData, updatePage } = require("./api/notion");
 const { sendEmail } = require("./api/nodemailer");
 const fs = require("fs");
 
@@ -9,14 +9,14 @@ require("dotenv").config();
 const run = async () => {
   const data = await getData();
   const mainText = fs.readFileSync(__dirname + "/text.html").toString();
-  console.log(mainText)
-
+  
   for (i = 0; i < data.length; i++) {
     if (data[i].status === "新規見込み客") {
-      const text = `${data[i].name}<br>${mainText}`;
-
-      sendEmail(data[i].email, "オンラインでの集客を実現！SNS＋ウェブサイト運用サービスに関するご提案", text);
-      // updatePage(data[i].data.id);
+      if (data[i].email) {
+        const text = `${data[i].name}<br>${mainText}`;
+        sendEmail(data[i].email, "オンラインでの集客を実現！SNS＋ウェブサイト運用サービスに関するご提案", text);
+        updatePage(data[i].data.id);
+      }
     }
   }
 };
