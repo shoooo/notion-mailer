@@ -5,15 +5,16 @@ const notion = new Client({
   auth: process.env.NOTION_TOKEN,
 });
 
-const database_id = process.env.NOTION_DATABASE_ID;
-
 const getData = async () => {
-  const query = {
-    path: `databases/${database_id}/query`,
-    method: "POST",
-  };
-
-  const { results } = await notion.request(query);
+  const {results} = await notion.databases.query({
+    database_id: process.env.SALES_DATABASE_ID,
+    filter: {
+      property: '状況',
+      select: {
+        equals: "新規見込み客",
+      },
+    },
+  });
 
   const data = results.map((page) => {
     return {
@@ -29,6 +30,31 @@ const getData = async () => {
   return data;
 };
 
+const getTemp = async (plan) => {
+  const results = await notion.databases.query({
+    database_id: process.env.TEMPLATE_DATABASE_ID,
+    filter: {
+      property: '推奨プラン',
+      select: {
+        equals: plan,
+      },
+    },
+  });
+
+  let text = "";
+
+  for (i = 0; i < results.results[0].properties.内容.rich_text.length; i++) {
+    text += results.results[0].properties.内容.rich_text[i].text.content;
+  }
+
+  const template = {
+    title: results.results[0].properties.題名.title[0].plain_text,
+    text: text
+  }
+
+  return template
+};
+
 const updatePage = async (page_id) => {
   notion.pages.update({
     page_id: page_id,
@@ -42,24 +68,4 @@ const updatePage = async (page_id) => {
   });
 };
 
-// const getTemplate = async () => {
-//   const query = {
-//     path: `databases/eb82c01ea36b41d7ba31c1a5c4553af8/query`,
-//     method: "POST",
-//   };
-
-//   const { results } = await notion.request(query);
-
-//   const data = results.map((page) => {
-//     return {
-//       data: page,
-//       id: page.id,
-//       title: page.properties.題名.rich_text[0].plain_text,
-//       content: page.properties.内容.rich_text
-//     };
-//   });
-
-//   return data;
-// };
-
-module.exports = { getData, updatePage };
+module.exports = { getData, getTemp, updatePage };

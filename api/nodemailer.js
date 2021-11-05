@@ -5,7 +5,7 @@ const sendEmail = async (to, subject, text) => {
         from: process.env.EMAIL,
         to: `${to}`,
         subject: `${subject}`,
-        html: `${text}`,
+        html: `<div style="white-space: pre">${text}`,
     };
 
     transporter.sendMail(message, async (err, response) => {
