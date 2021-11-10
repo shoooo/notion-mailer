@@ -5,18 +5,22 @@ const { sendEmail } = require("./api/nodemailer");
 const app = express();
 require("dotenv").config();
 
-const run = async () => {
-  const data = await getData();
-  const template = await getTemp("プレミアム");
-
-  for (i = 0; i < data.length; i++) {
-    if (data[i].email) {
-      const text = `${data[i].name}<br>${template.text}`;
-
-      sendEmail(data[i].email, template.title, text)
-        .then(updatePage(data[i].data.id));
+const run = () => {
+  getData().then(async (data) => {
+    for (i = 0; i < data.length; i++) {      
+      if (!data[i].email) {
+        updatePage(data[i].data.id, "情報不足");
+      } else {
+        const name = data[i].name
+        const email = data[i].email
+        const page_id = data[i].data.id
+        const temp = await getTemp(data[i].plan);
+        const text = `${name}<br>${temp.text}`;
+        sendEmail(email, temp.title, text)
+          .then(updatePage(page_id, "連絡済み"))
+      }
     }
-  }
+  });
 };
 
 run();

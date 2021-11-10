@@ -55,16 +55,42 @@ const getTemp = async (plan) => {
   return template
 };
 
-const updatePage = async (page_id) => {
+const updatePage = async (page_id, select) => {
   notion.pages.update({
-    page_id: page_id,
-    properties: {
-      "状況": {
-        select: {
-          name: "連絡済み"
-        },
+      page_id: page_id,
+      properties: {
+          "状況": {
+              select: {
+                  name: select
+              },
+          },
       },
-    },
+  });
+};
+
+const updateStage = async (page_id, select) => {
+  notion.pages.update({
+      page_id: page_id,
+      properties: {
+          "ステージ": {
+              select: {
+                  name: select
+              },
+          },
+      },
+  });
+};
+
+const updateDate = async (page_id, date) => {
+  await notion.pages.update({
+      page_id: page_id,
+      properties: {
+          "公開日": {
+              "date": {
+                  "start": date
+              },
+          }
+      },
   });
 };
 
