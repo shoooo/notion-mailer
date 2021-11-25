@@ -7,8 +7,8 @@ require("dotenv").config();
 
 const run = () => {
   getData().then(async (data) => {
-    for (i = 0; i < data.length; i++) {      
-      if (!data[i].email) {
+    for (let i = 0; i < data.length; i++) {
+      if (!data[i].email || !data[i].plan) {
         updatePage(data[i].data.id, "情報不足");
       } else {
         const name = data[i].name

@@ -68,19 +68,6 @@ const updatePage = async (page_id, select) => {
   });
 };
 
-const updateStage = async (page_id, select) => {
-  notion.pages.update({
-      page_id: page_id,
-      properties: {
-          "ステージ": {
-              select: {
-                  name: select
-              },
-          },
-      },
-  });
-};
-
 const updateDate = async (page_id, date) => {
   await notion.pages.update({
       page_id: page_id,
